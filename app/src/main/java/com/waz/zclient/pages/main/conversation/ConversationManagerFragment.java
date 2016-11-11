@@ -39,6 +39,7 @@ import com.waz.zclient.OnBackPressedListener;
 import com.waz.zclient.R;
 import com.waz.zclient.controllers.drawing.DrawingController;
 import com.waz.zclient.controllers.drawing.DrawingObserver;
+import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.controllers.location.LocationObserver;
 import com.waz.zclient.controllers.navigation.Page;
 import com.waz.zclient.controllers.tracking.events.group.AddedMemberToGroupEvent;
@@ -396,14 +397,14 @@ public class ConversationManagerFragment extends BaseFragment<ConversationManage
     //////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination) {
+    public void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination, IDrawingController.DrawingMethod method) {
         getChildFragmentManager().beginTransaction()
                                  .setCustomAnimations(R.anim.camera__from__profile__transition,
                                                       R.anim.profile_fade_out_form,
                                                       R.anim.profile_fade_in_form,
                                          R.anim.profile_fade_out_form)
                                  .replace(R.id.fl__conversation_manager__message_list_container,
-                                          DrawingFragment.newInstance(image, drawingDestination),
+                                          DrawingFragment.newInstance(image, drawingDestination, method),
                                           DrawingFragment.TAG)
                                  .addToBackStack(DrawingFragment.TAG)
                                  .commit();

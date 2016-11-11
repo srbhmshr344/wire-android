@@ -46,6 +46,7 @@ import com.waz.zclient.OnBackPressedListener;
 import com.waz.zclient.R;
 import com.waz.zclient.controllers.drawing.DrawingController;
 import com.waz.zclient.controllers.drawing.DrawingObserver;
+import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.controllers.giphy.GiphyObserver;
 import com.waz.zclient.controllers.location.LocationObserver;
 import com.waz.zclient.controllers.navigation.Page;
@@ -467,12 +468,12 @@ public class RootFragment extends BaseFragment<RootFragment.Container> implement
     }
 
     @Override
-    public void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination) {
+    public void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination, IDrawingController.DrawingMethod method) {
         slidingPaneLayout.setVisibility(View.GONE);
         getControllerFactory().getCameraController().closeCamera(CameraContext.MESSAGE);
         getChildFragmentManager().beginTransaction()
                                  .add(R.id.fl__root__sketch,
-                                      DrawingFragment.newInstance(image, drawingDestination),
+                                      DrawingFragment.newInstance(image, drawingDestination, method),
                                       DrawingFragment.TAG)
                                  .commit();
         getControllerFactory().getNavigationController().setRightPage(Page.DRAWING, TAG);

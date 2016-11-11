@@ -576,6 +576,8 @@
     <dimen name="giphy_preview__header_icons_padding">8dp</dimen>
     <dimen name="giphy_grid_view__margin">0.5dp</dimen>
 
+    <dimen name="image_preview__sketch_menu__height">72dp</dimen>
+
     <dimen name="audio_message_recording__recorder__margin_right">60dp</dimen>
     <dimen name="audio_message_recording__slide_control__width">40dp</dimen>
     <dimen name="audio_message_recording__slide_control__height">96dp</dimen>

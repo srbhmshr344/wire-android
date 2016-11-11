@@ -21,7 +21,7 @@ import com.waz.api.ImageAsset;
 
 public interface DrawingObserver {
 
-    void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination);
+    void onShowDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination, IDrawingController.DrawingMethod method);
 
     void onHideDrawing(DrawingController.DrawingDestination drawingDestination, boolean imageSent);
 

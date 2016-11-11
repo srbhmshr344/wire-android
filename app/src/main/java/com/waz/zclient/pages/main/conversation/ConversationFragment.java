@@ -94,6 +94,7 @@ import com.waz.zclient.controllers.confirmation.ConfirmationCallback;
 import com.waz.zclient.controllers.confirmation.ConfirmationRequest;
 import com.waz.zclient.controllers.confirmation.IConfirmationController;
 import com.waz.zclient.controllers.currentfocus.IFocusController;
+import com.waz.zclient.controllers.drawing.DrawingController;
 import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.controllers.giphy.GiphyObserver;
 import com.waz.zclient.controllers.globallayout.KeyboardVisibilityObserver;
@@ -2183,9 +2184,12 @@ public class ConversationFragment extends BaseFragment<ConversationFragment.Cont
     }
 
     @Override
-    public void onSketchPictureFromPreview(ImageAsset imageAsset, ImagePreviewLayout.Source source) {
+    public void onSketchOnPreviewPicture(ImageAsset imageAsset,
+                                         ImagePreviewLayout.Source source,
+                                         DrawingController.DrawingMethod method) {
         getControllerFactory().getDrawingController().showDrawing(imageAsset,
-                                                                  IDrawingController.DrawingDestination.CAMERA_PREVIEW_VIEW);
+                                                                  IDrawingController.DrawingDestination.CAMERA_PREVIEW_VIEW,
+                                                                  method);
         extendedCursorContainer.close(true);
     }
 

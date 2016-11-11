@@ -18,7 +18,6 @@
 package com.waz.zclient.pages.extendedcursor.image;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -27,10 +26,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.waz.api.ImageAsset;
 import com.waz.zclient.R;
+import com.waz.zclient.controllers.drawing.DrawingController;
+import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.pages.main.profile.views.ConfirmationMenu;
 import com.waz.zclient.pages.main.profile.views.ConfirmationMenuListener;
 import com.waz.zclient.ui.theme.OptionsDarkTheme;
-import com.waz.zclient.ui.utils.ColorUtils;
 import com.waz.zclient.ui.utils.TextViewUtils;
 import com.waz.zclient.utils.ViewUtils;
 import com.waz.zclient.views.images.ImageAssetView;
@@ -50,7 +50,10 @@ public class ImagePreviewLayout extends FrameLayout implements
     private ImageAssetView imageView;
     private FrameLayout titleTextViewContainer;
     private TextView titleTextView;
-    private View sketchButton;
+    private View sketchMenuContainer;
+    private View sketchDrawButton;
+    private View sketchEmojiButton;
+    private View sketchTextButton;
     private boolean sketchShouldBeVisible;
 
     private Callback callback;
@@ -77,7 +80,10 @@ public class ImagePreviewLayout extends FrameLayout implements
         setOnClickListener(this);
         imageView = ViewUtils.getView(this, R.id.iv__conversation__preview);
         approveImageSelectionMenu = ViewUtils.getView(this, R.id.cm__cursor_preview);
-        sketchButton = ViewUtils.getView(this, R.id.ll__preview__sketch);
+        sketchMenuContainer = ViewUtils.getView(this, R.id.ll__preview__sketch);
+        sketchDrawButton =  ViewUtils.getView(this, R.id.gtv__preview__drawing_button__sketch);
+        sketchEmojiButton =  ViewUtils.getView(this, R.id.gtv__preview__drawing_button__emoji);
+        sketchTextButton =  ViewUtils.getView(this, R.id.gtv__preview__drawing_button__text);
         titleTextView = ViewUtils.getView(this, R.id.ttv__image_preview__title);
         titleTextViewContainer = ViewUtils.getView(this, R.id.ttv__image_preview__title__container);
 
@@ -88,7 +94,9 @@ public class ImagePreviewLayout extends FrameLayout implements
         approveImageSelectionMenu.setConfirm(getResources().getString(R.string.confirmation_menu__confirm_done));
         approveImageSelectionMenu.setConfirmationMenuListener(this);
 
-        sketchButton.setOnClickListener(this);
+        sketchDrawButton.setOnClickListener(this);
+        sketchEmojiButton.setOnClickListener(this);
+        sketchTextButton.setOnClickListener(this);
         // By default sketch button is visible
         sketchShouldBeVisible = true;
     }
@@ -118,7 +126,7 @@ public class ImagePreviewLayout extends FrameLayout implements
             case R.id.iv__conversation__preview:
                 if (approveImageSelectionMenu.getVisibility() == VISIBLE) {
                     if (sketchShouldBeVisible) {
-                        ViewUtils.fadeOutView(sketchButton);
+                        ViewUtils.fadeOutView(sketchMenuContainer);
                     }
                     ViewUtils.fadeOutView(approveImageSelectionMenu);
 
@@ -127,7 +135,7 @@ public class ImagePreviewLayout extends FrameLayout implements
                     }
                 } else {
                     if (sketchShouldBeVisible) {
-                        ViewUtils.fadeInView(sketchButton);
+                        ViewUtils.fadeInView(sketchMenuContainer);
                     }
                     ViewUtils.fadeInView(approveImageSelectionMenu);
 
@@ -136,9 +144,25 @@ public class ImagePreviewLayout extends FrameLayout implements
                     }
                 }
                 break;
-            case R.id.ll__preview__sketch:
+            case R.id.gtv__preview__drawing_button__sketch:
                 if (callback != null) {
-                    callback.onSketchPictureFromPreview(imageAsset, source);
+                    callback.onSketchOnPreviewPicture(imageAsset,
+                                                      source,
+                                                      IDrawingController.DrawingMethod.DRAW);
+                }
+                break;
+            case R.id.gtv__preview__drawing_button__emoji:
+                if (callback != null) {
+                    callback.onSketchOnPreviewPicture(imageAsset,
+                                                      source,
+                                                      IDrawingController.DrawingMethod.EMOJI);
+                }
+                break;
+            case R.id.gtv__preview__drawing_button__text:
+                if (callback != null) {
+                    callback.onSketchOnPreviewPicture(imageAsset,
+                                                      source,
+                                                      IDrawingController.DrawingMethod.TEXT);
                 }
                 break;
         }
@@ -146,18 +170,12 @@ public class ImagePreviewLayout extends FrameLayout implements
 
     public void setAccentColor(int color) {
         approveImageSelectionMenu.setAccentColor(color);
-        if (sketchShouldBeVisible) {
-            sketchButton.setBackground(ColorUtils.getButtonBackground(Color.TRANSPARENT,
-                                                                      color,
-                                                                      0,
-                                                                      getResources().getDimensionPixelSize(R.dimen.camera__sketch_button__corner_radius)));
-        }
     }
 
 
     public void showSketch(boolean show) {
         sketchShouldBeVisible = show;
-        sketchButton.setVisibility(show ? VISIBLE : GONE);
+        sketchMenuContainer.setVisibility(show ? VISIBLE : GONE);
     }
 
     public void setTitle(String title) {
@@ -179,7 +197,7 @@ public class ImagePreviewLayout extends FrameLayout implements
     public interface Callback {
         void onCancelPreview();
 
-        void onSketchPictureFromPreview(ImageAsset imageAsset, Source source);
+        void onSketchOnPreviewPicture(ImageAsset imageAsset, Source source, DrawingController.DrawingMethod method);
 
         void onSendPictureFromPreview(ImageAsset imageAsset, Source source);
     }

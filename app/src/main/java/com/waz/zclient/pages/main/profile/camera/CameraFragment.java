@@ -41,6 +41,7 @@ import com.waz.zclient.camera.views.CameraPreviewTextureView;
 import com.waz.zclient.camera.FlashMode;
 import com.waz.zclient.controllers.accentcolor.AccentColorObserver;
 import com.waz.zclient.controllers.camera.CameraActionObserver;
+import com.waz.zclient.controllers.drawing.DrawingController;
 import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.controllers.orientation.OrientationControllerObserver;
 import com.waz.zclient.pages.BaseFragment;
@@ -378,7 +379,9 @@ public class CameraFragment extends BaseFragment<CameraFragment.Container> imple
     }
 
     @Override
-    public void onSketchPictureFromPreview(ImageAsset imageAsset, ImagePreviewLayout.Source source) {
+    public void onSketchOnPreviewPicture(ImageAsset imageAsset,
+                                         ImagePreviewLayout.Source source,
+                                         DrawingController.DrawingMethod method) {
         getControllerFactory().getDrawingController().showDrawing(imageAsset,
                                                                   IDrawingController.DrawingDestination.CAMERA_PREVIEW_VIEW);
     }

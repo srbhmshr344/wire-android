@@ -28,7 +28,14 @@ public class StubDrawingController implements IDrawingController {
     ;
   }
 
-  @Override
+    @Override
+    public void showDrawing(ImageAsset image,
+                            DrawingDestination drawingDestination,
+                            DrawingMethod method) {
+
+    }
+
+    @Override
   public void tearDown() {
     ;
   }

@@ -133,12 +133,12 @@ public class ConfirmationMenu extends LinearLayout {
 
     public void setWireTheme(OptionsTheme optionsTheme) {
         confirmTextView.setTextColor(optionsTheme.getTextColorPrimary());
-        cancelTextView.setTextColor(optionsTheme.getTextColorPrimary());
     }
 
     public void setAccentColor(int color) {
         setConfirmColor(confirmTextView.getCurrentTextColor(), color);
         setCancelColor(cancelTextView.getCurrentTextColor(), color);
+        cancelTextView.setTextColor(color);
     }
 
     public void setConfirmationMenuListener(ConfirmationMenuListener confirmationMenuListener) {

@@ -27,6 +27,7 @@ import com.waz.api.IConversation;
 import com.waz.api.ImageAsset;
 import com.waz.api.ImageAssetFactory;
 import com.waz.zclient.R;
+import com.waz.zclient.controllers.drawing.DrawingController;
 import com.waz.zclient.controllers.sharing.SharedContentType;
 import com.waz.zclient.pages.BaseFragment;
 import com.waz.zclient.pages.extendedcursor.image.ImagePreviewLayout;
@@ -107,7 +108,9 @@ public class ImageSharingPreviewFragment extends BaseFragment<ImageSharingPrevie
     }
 
     @Override
-    public void onSketchPictureFromPreview(ImageAsset imageAsset, ImagePreviewLayout.Source source) {
+    public void onSketchOnPreviewPicture(ImageAsset imageAsset,
+                                         ImagePreviewLayout.Source source,
+                                         DrawingController.DrawingMethod method) {
         // No sketch supported for sharing atm
     }
 

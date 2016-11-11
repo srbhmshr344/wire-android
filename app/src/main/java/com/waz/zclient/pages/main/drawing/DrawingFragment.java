@@ -44,6 +44,7 @@ import com.waz.zclient.OnBackPressedListener;
 import com.waz.zclient.R;
 import com.waz.zclient.controllers.accentcolor.AccentColorObserver;
 import com.waz.zclient.controllers.drawing.DrawingController;
+import com.waz.zclient.controllers.drawing.IDrawingController;
 import com.waz.zclient.controllers.globallayout.KeyboardVisibilityObserver;
 import com.waz.zclient.pages.BaseFragment;
 import com.waz.zclient.ui.colorpicker.ColorPickerLayout;
@@ -74,6 +75,7 @@ public class DrawingFragment extends BaseFragment<DrawingFragment.Container> imp
     private static final String SAVED_INSTANCE_BITMAP = "SAVED_INSTANCE_BITMAP";
     private static final String ARGUMENT_BACKGROUND_IMAGE = "ARGUMENT_BACKGROUND_IMAGE";
     private static final String ARGUMENT_DRAWING_DESTINATION = "ARGUMENT_DRAWING_DESTINATION";
+    private static final String ARGUMENT_DRAWING_METHOD = "ARGUMENT_DRAWING_METHOD";
 
     private static final float TEXT_ALPHA_INVISIBLE = 0F;
     private static final float TEXT_ALPHA_MOVE = 0.2F;
@@ -110,6 +112,7 @@ public class DrawingFragment extends BaseFragment<DrawingFragment.Container> imp
     private LoadHandle bitmapLoadHandle;
 
     private DrawingController.DrawingDestination drawingDestination;
+    private DrawingController.DrawingMethod drawingMethod;
     private boolean includeBackgroundImage;
     private EmojiSize currentEmojiSize = EmojiSize.SMALL;
 
@@ -181,10 +184,15 @@ public class DrawingFragment extends BaseFragment<DrawingFragment.Container> imp
     };
 
     public static DrawingFragment newInstance(ImageAsset backgroundAsset, DrawingController.DrawingDestination drawingDestination) {
+        return DrawingFragment.newInstance(backgroundAsset, drawingDestination, IDrawingController.DrawingMethod.DRAW);
+    }
+
+    public static DrawingFragment newInstance(ImageAsset backgroundAsset, DrawingController.DrawingDestination drawingDestination, DrawingController.DrawingMethod method) {
         DrawingFragment fragment = new DrawingFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARGUMENT_BACKGROUND_IMAGE, backgroundAsset);
         bundle.putString(ARGUMENT_DRAWING_DESTINATION, drawingDestination.toString());
+        bundle.putString(ARGUMENT_DRAWING_METHOD, method.toString());
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -203,6 +211,7 @@ public class DrawingFragment extends BaseFragment<DrawingFragment.Container> imp
         Bundle args = getArguments();
         backgroundImage = args.getParcelable(ARGUMENT_BACKGROUND_IMAGE);
         drawingDestination = DrawingController.DrawingDestination.valueOf(args.getString(ARGUMENT_DRAWING_DESTINATION));
+        drawingMethod = DrawingController.DrawingMethod.valueOf(args.getString(ARGUMENT_DRAWING_METHOD));
         sensorManager = (SensorManager) getActivity().getSystemService(Activity.SENSOR_SERVICE);
         defaultTextColor = ContextCompat.getColor(getContext(), R.color.text__primary_light);
     }
@@ -326,6 +335,12 @@ public class DrawingFragment extends BaseFragment<DrawingFragment.Container> imp
                 includeBackgroundImage = true;
                 drawingCanvasView.setBackgroundBitmap(bitmap);
                 cancelLoadHandle();
+
+                if (drawingMethod == IDrawingController.DrawingMethod.EMOJI) {
+                    onEmojiClick();
+                } else if (drawingMethod == IDrawingController.DrawingMethod.TEXT) {
+                    onTextClick();
+                }
             }
 
             @Override

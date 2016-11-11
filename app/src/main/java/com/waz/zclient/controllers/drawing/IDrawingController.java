@@ -27,11 +27,19 @@ public interface IDrawingController {
         SKETCH_BUTTON
     }
 
+    enum DrawingMethod {
+        DRAW,
+        EMOJI,
+        TEXT
+    }
+
     void addDrawingObserver(DrawingObserver drawingObserver);
 
     void removeDrawingObserver(DrawingObserver drawingObserver);
 
     void showDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination);
+
+    void showDrawing(ImageAsset image, DrawingController.DrawingDestination drawingDestination, DrawingMethod method);
 
     void hideDrawing(DrawingController.DrawingDestination drawingDestination, boolean imageSent);
 

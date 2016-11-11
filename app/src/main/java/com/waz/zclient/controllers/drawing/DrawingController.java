@@ -39,7 +39,16 @@ public class DrawingController implements IDrawingController {
     @Override
     public void showDrawing(ImageAsset image, DrawingDestination drawingDestination) {
         for (DrawingObserver observer : observers) {
-            observer.onShowDrawing(image, drawingDestination);
+            observer.onShowDrawing(image, drawingDestination, DrawingMethod.DRAW);
+        }
+    }
+
+    @Override
+    public void showDrawing(ImageAsset image,
+                            DrawingDestination drawingDestination,
+                            DrawingMethod method) {
+        for (DrawingObserver observer : observers) {
+            observer.onShowDrawing(image, drawingDestination, method);
         }
     }
 
