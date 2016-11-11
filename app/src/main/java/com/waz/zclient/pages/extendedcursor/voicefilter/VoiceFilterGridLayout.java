@@ -173,7 +173,7 @@ public class VoiceFilterGridLayout extends FrameLayout implements
                 case 2:
                     return R.string.glyph__filter_robot;
                 case 3:
-                    return R.string.glyph__filter_reverse;
+                    return R.string.glyph__filter_rollercoaster;
             }
         }
 
@@ -202,7 +202,7 @@ public class VoiceFilterGridLayout extends FrameLayout implements
                 case 2:
                     return AudioEffect.VOCODER_MED;    // Should be Robot  (glyph__filter_robot)
                 case 3:
-                    return AudioEffect.REVERSE;   //  Should be UpsideDown  (glyph__filter_reverse)
+                    return AudioEffect.PITCH_UP_DOWN_MAX;   //  Should be Rollercoaster  (glyph__filter_reverse)
             }
         }
 

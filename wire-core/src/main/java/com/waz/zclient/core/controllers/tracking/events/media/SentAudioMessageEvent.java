@@ -34,7 +34,8 @@ public class SentAudioMessageEvent extends Event {
         CATHEDRAL("cathedral"),
         ALIEN("alien"),
         ROBOT("robot"),
-        UPSIDE_DOWN("upsidedown")
+        UPSIDE_DOWN("upsidedown"),
+        ROLLERCOASTER("rollercoaster")
         ;
 
         public final String nameString;

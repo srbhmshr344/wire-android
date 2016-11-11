@@ -234,8 +234,8 @@ public class TrackingUtils {
                 case VOCODER_MED:
                     audioEffectType = SentAudioMessageEvent.AudioEffectType.ROBOT;
                     break;
-                case REVERSE:
-                    audioEffectType = SentAudioMessageEvent.AudioEffectType.UPSIDE_DOWN;
+                case PITCH_UP_DOWN_MAX:
+                    audioEffectType = SentAudioMessageEvent.AudioEffectType.ROLLERCOASTER;
                     break;
             }
         }
