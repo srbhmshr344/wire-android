@@ -172,6 +172,17 @@
         android:paddingEnd="@dimen/framework__general__right_padding"
         >
 
+        <com.waz.zclient.ui.text.GlyphTextView
+            android:id="@+id/gtv__drawing__gallery_button"
+            android:layout_width="@dimen/wire__icon_button__diameter"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|start"
+            android:gravity="center"
+            android:text="@string/glyph__picture"
+            android:textColor="@color/text__primary_light"
+            android:textSize="@dimen/wire__icon_button__text_size"
+            />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

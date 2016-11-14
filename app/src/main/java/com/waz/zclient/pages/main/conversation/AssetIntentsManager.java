@@ -112,6 +112,10 @@ public class AssetIntentsManager {
         openDocument(INTENT_GALLERY_TYPE, IntentType.GALLERY);
     }
 
+    public void openGalleryForSketch() {
+        openDocument(INTENT_GALLERY_TYPE, IntentType.SKETCH_FROM_GALLERY);
+    }
+
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (callback == null) {
@@ -228,6 +232,7 @@ public class AssetIntentsManager {
     public enum IntentType {
         UNKOWN(-1, -1),
         GALLERY(9411, 8411),
+        SKETCH_FROM_GALLERY(9416, 8416),
         VIDEO(9412, 8412),
         VIDEO_CURSOR_BUTTON(9415, 8415),
         CAMERA(9413, 8413),
@@ -245,6 +250,10 @@ public class AssetIntentsManager {
 
             if (requestCode == GALLERY.requestCode) {
                 return GALLERY;
+            }
+
+            if (requestCode == SKETCH_FROM_GALLERY.requestCode) {
+                return SKETCH_FROM_GALLERY;
             }
 
             if (requestCode == CAMERA.requestCode) {
