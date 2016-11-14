@@ -49,7 +49,8 @@ import com.waz.zclient.views.LoadingIndicatorView;
 import com.waz.zclient.ui.views.OnDoubleClickListener;
 import timber.log.Timber;
 
-public class ImageMessageViewController extends MessageViewController implements AccentColorObserver {
+public class ImageMessageViewController extends MessageViewController implements AccentColorObserver,
+                                                                                 View.OnClickListener {
 
     private static final String FULL_IMAGE_LOADED = "FULL_IMAGE_LOADED";
 
@@ -59,8 +60,11 @@ public class ImageMessageViewController extends MessageViewController implements
     private ImageView polkadotView;
     private ImageAsset imageAsset;
     private TextView textViewChangeSetting;
-    private TextView sketchButton;
-    private TextView singleImageButton;
+    private View imageActionContainer;
+    private TextView sketchDrawButton;
+    private View sketchEmojiButton;
+    private View sketchTextButton;
+    private TextView fullScreenButton;
     private View wifiContainer;
     private EphemeralDotAnimationView ephemeralDotAnimationView;
     private View ephemeralTypeView;
@@ -71,8 +75,6 @@ public class ImageMessageViewController extends MessageViewController implements
     private boolean tapButtonsVisible;
     private int paddingLeft;
     private int paddingRight;
-    private int imageButtonsBasePadding;
-    private int imageButtonsSize;
     private int minImageContainerWidth;
 
     private final OnDoubleClickListener containerOnDoubleClickListener = new OnDoubleClickListener() {
@@ -105,8 +107,7 @@ public class ImageMessageViewController extends MessageViewController implements
             tapButtonsVisible = shouldOpenTapButtons;
             int visibility = tapButtonsVisible ? View.VISIBLE : View.GONE;
             if (!(message.isEphemeral() && message.isExpired())) {
-                singleImageButton.setVisibility(visibility);
-                sketchButton.setVisibility(visibility);
+               imageActionContainer.setVisibility(visibility);
             }
         }
     };
@@ -131,22 +132,18 @@ public class ImageMessageViewController extends MessageViewController implements
         textViewChangeSetting = ViewUtils.getView(view, R.id.ttv__conversation_row__image__change_settings);
         wifiContainer = ViewUtils.getView(view, R.id.ll__conversation_row__image__wifi_warning);
         wifiContainer.setVisibility(View.GONE);
-        singleImageButton = ViewUtils.getView(view, R.id.gtv__row_conversation__image_fullscreen);
-        singleImageButton.setVisibility(View.GONE);
-        singleImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSingleImageView();
-            }
-        });
-        sketchButton = ViewUtils.getView(view, R.id.gtv__row_conversation__image_sketch);
-        sketchButton.setVisibility(View.GONE);
-        sketchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSketchOnImageView();
-            }
-        });
+        imageActionContainer = ViewUtils.getView(view, R.id.fl__row_conversation__image_actions);
+        fullScreenButton = ViewUtils.getView(view, R.id.gtv__row_conversation__image_fullscreen);
+        sketchDrawButton = ViewUtils.getView(view, R.id.gtv__row_conversation__drawing_button__sketch);
+        sketchEmojiButton = ViewUtils.getView(view, R.id.gtv__row_conversation__drawing_button__emoji);
+        sketchTextButton = ViewUtils.getView(view, R.id.gtv__row_conversation__drawing_button__text);
+
+        imageActionContainer.setVisibility(View.GONE);
+        fullScreenButton.setOnClickListener(this);
+        sketchDrawButton.setOnClickListener(this);
+        sketchEmojiButton.setOnClickListener(this);
+        sketchTextButton.setOnClickListener(this);
+
         tapButtonsVisible = false;
         ephemeralDotAnimationView = ViewUtils.getView(view, R.id.edav__ephemeral_view);
         ephemeralTypeView = ViewUtils.getView(view, R.id.gtv__row_conversation__image__ephemeral_type);
@@ -158,8 +155,6 @@ public class ImageMessageViewController extends MessageViewController implements
 
         paddingLeft = (int) context.getResources().getDimension(R.dimen.content__padding_left);
         paddingRight = (int) context.getResources().getDimension(R.dimen.content__padding_right);
-        imageButtonsBasePadding = (int) context.getResources().getDimension(R.dimen.wire__padding__regular);
-        imageButtonsSize = (int) context.getResources().getDimension(R.dimen.content__image__button_size);
         minImageContainerWidth = (int) context.getResources().getDimension(R.dimen.content__min_container_width);
 
         afterInit();
@@ -201,18 +196,6 @@ public class ImageMessageViewController extends MessageViewController implements
                 ViewUtils.setPaddingRight(imageContainer, getAdjustedRightPadding(displayWidth, finalWidth));
                 imageContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.MATCH_PARENT));
-                int buttonsPadding = getButtonsPadding(finalWidth);
-
-                ((FrameLayout.LayoutParams) sketchButton.getLayoutParams()).setMargins(
-                    buttonsPadding,
-                    imageButtonsBasePadding,
-                    buttonsPadding,
-                    imageButtonsBasePadding);
-                ((FrameLayout.LayoutParams) singleImageButton.getLayoutParams()).setMargins(
-                    buttonsPadding,
-                    imageButtonsBasePadding,
-                    buttonsPadding,
-                    imageButtonsBasePadding);
             }
         }
 
@@ -221,6 +204,7 @@ public class ImageMessageViewController extends MessageViewController implements
         layoutParams.height = finalHeight;
         gifImageView.setLayoutParams(layoutParams);
         polkadotView.setLayoutParams(layoutParams);
+        imageActionContainer.setLayoutParams(layoutParams);
         ViewUtils.setWidth(previewLoadingIndicator, finalWidth);
 
 
@@ -364,12 +348,6 @@ public class ImageMessageViewController extends MessageViewController implements
         return displayWidth - containerWidth - paddingLeft;
     }
 
-    private int getButtonsPadding(int finalWidth) {
-        int containerWidth = Math.max(finalWidth, minImageContainerWidth);
-        return Math.max(imageButtonsBasePadding + Math.min((containerWidth - (imageButtonsSize  + imageButtonsBasePadding) * 2) / 2, 0), 0);
-    }
-
-
     @Override
     public View getView() {
         return view;
@@ -385,8 +363,7 @@ public class ImageMessageViewController extends MessageViewController implements
         containerOnDoubleClickListener.reset();
         gifImageView.animate().cancel();
         polkadotView.animate().cancel();
-        singleImageButton.setVisibility(View.GONE);
-        sketchButton.setVisibility(View.GONE);
+        imageActionContainer.setVisibility(View.GONE);
         gifImageView.setVisibility(View.INVISIBLE);
         gifImageView.setImageDrawable(null);
         tapButtonsVisible = false;
@@ -424,6 +401,37 @@ public class ImageMessageViewController extends MessageViewController implements
                                                                            color));
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.gtv__row_conversation__image_fullscreen:
+                boolean fullImageLoaded = this.view != null && ImageMessageViewController.FULL_IMAGE_LOADED.equals(this.view.getTag());
+                if (!fullImageLoaded) {
+                    return;
+                }
+                final ISingleImageController singleImageController = messageViewsContainer.getControllerFactory().getSingleImageController();
+                singleImageController.setViewReferences(gifImageView);
+                singleImageController.showSingleImage(message);
+                break;
+            case R.id.gtv__row_conversation__drawing_button__sketch:
+                messageViewsContainer.getControllerFactory().getDrawingController().showDrawing(message.getImage(),
+                                                                                                IDrawingController.DrawingDestination.SINGLE_IMAGE_VIEW,
+                                                                                                IDrawingController.DrawingMethod.DRAW);
+                break;
+            case R.id.gtv__row_conversation__drawing_button__emoji:
+                messageViewsContainer.getControllerFactory().getDrawingController().showDrawing(message.getImage(),
+                                                                                                IDrawingController.DrawingDestination.SINGLE_IMAGE_VIEW,
+                                                                                                IDrawingController.DrawingMethod.EMOJI);
+                break;
+            case R.id.gtv__row_conversation__drawing_button__text:
+                messageViewsContainer.getControllerFactory().getDrawingController().showDrawing(message.getImage(),
+                                                                                                IDrawingController.DrawingDestination.SINGLE_IMAGE_VIEW,
+                                                                                                IDrawingController.DrawingMethod.TEXT);
+                break;
+
+        }
+    }
+
     private void checkMessageExpired() {
         if (message.isEphemeral() && message.isExpired()) {
             imageContainer.setBackgroundColor(ColorUtils.injectAlpha(ThemeUtils.getEphemeralBackgroundAlpha(context),
@@ -437,8 +445,7 @@ public class ImageMessageViewController extends MessageViewController implements
             }
             previewLoadingIndicator.hide();
             previewLoadingIndicator.setVisibility(View.GONE);
-            singleImageButton.setVisibility(View.GONE);
-            sketchButton.setVisibility(View.GONE);
+            imageActionContainer.setVisibility(View.GONE);
             tapButtonsVisible = false;
             ephemeralTypeView.setVisibility(View.VISIBLE);
         } else {
@@ -449,25 +456,8 @@ public class ImageMessageViewController extends MessageViewController implements
         }
     }
 
-    public void showSingleImageView() {
-        boolean fullImageLoaded = view != null && ImageMessageViewController.FULL_IMAGE_LOADED.equals(view.getTag());
-        if (!fullImageLoaded) {
-            return;
-        }
-        final ISingleImageController singleImageController = messageViewsContainer.getControllerFactory().getSingleImageController();
-        singleImageController.setViewReferences(gifImageView);
-        singleImageController.showSingleImage(message);
-    }
-
-    public void showSketchOnImageView() {
-        messageViewsContainer.getControllerFactory().getDrawingController().showDrawing(message.getImage(),
-                                                                                        IDrawingController.DrawingDestination.SINGLE_IMAGE_VIEW);
-    }
-
     public void closeExtras() {
-        singleImageButton.setVisibility(View.GONE);
-        sketchButton.setVisibility(View.GONE);
+        imageActionContainer.setVisibility(View.GONE);
         tapButtonsVisible = false;
     }
-
 }
